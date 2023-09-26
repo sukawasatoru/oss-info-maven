@@ -1,0 +1,22 @@
+[package]
+name = "oss-info-maven"
+version = "0.1.0"
+edition = "2021"
+description = "Collect OSS information from server"
+authors = ["Satoru Sukawa <sukawasatoru.github@outlook.jp>"]
+
+[dependencies]
+anyhow = "=1.0.75"
+csv = "=1.2.2"
+indexmap = "=2.0.0"
+futures = "=0.3.28"
+quick-xml = { version = "=0.30.0", features = ["serialize"] }
+reqwest = { version = "=0.11.20", features = ["brotli", "deflate", "gzip"] }
+serde = { version = "=1.0.188", features = ["derive"] }
+tokio = { version = "=1.32.0", features = ["macros", "rt-multi-thread", "signal", "tracing"] }
+tracing = "=0.1.37"
+tracing-subscriber = { version = "=0.3.17", features = ["env-filter"] }
+url = { version = "=2.4.1", features = ["serde"] }
+
+[dev-dependencies]
+axum = "=0.6.20"
