@@ -7,6 +7,8 @@ authors = ["Satoru Sukawa <sukawasatoru.github@outlook.jp>"]
 
 [dependencies]
 anyhow = "=1.0.75"
+clap = { version = "=4.4.5", features = ["derive"] }
+clap_complete = "=4.4.2"
 csv = "=1.2.2"
 indexmap = "=2.0.0"
 futures = "=0.3.28"

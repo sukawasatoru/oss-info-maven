@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+use clap::{CommandFactory, Parser, ValueEnum};
 use futures::StreamExt;
 use indexmap::IndexMap;
+use oss_info_maven::model::SPDX;
 use oss_info_maven::prelude::*;
 use oss_info_maven::retrieve_maven_lib;
 use std::io::prelude::*;
@@ -24,9 +26,41 @@ use std::sync::Arc;
 use tokio::sync::Semaphore;
 use tracing::{info_span, Instrument};
 
+/// Collect OSS information from server.
+#[derive(Parser)]
+struct Opt {
+    /// Output format type.
+    #[clap(long, default_value = "csv")]
+    format: FormatType,
+
+    /// Generate shell completions.
+    #[arg(long, exclusive = true)]
+    completion: Option<clap_complete::Shell>,
+}
+
+#[derive(Clone, ValueEnum)]
+enum FormatType {
+    CSV,
+}
+
 #[tokio::main]
 async fn main() -> Fallible<()> {
-    tracing_subscriber::fmt::init();
+    tracing_subscriber::fmt()
+        .with_writer(std::io::stderr)
+        .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+        .init();
+
+    let opt = Opt::parse();
+
+    if let Some(shell) = opt.completion {
+        clap_complete::generate(
+            shell,
+            &mut Opt::command(),
+            env!("CARGO_PKG_NAME"),
+            &mut std::io::stdout(),
+        );
+        return Ok(());
+    }
 
     info!("hello");
 
@@ -72,7 +106,43 @@ async fn main() -> Fallible<()> {
         dep_map[&name] = Some(pom);
     }
 
-    dbg!(dep_map);
+    match opt.format {
+        FormatType::CSV => {
+            let mut writer = csv::WriterBuilder::new().from_writer(std::io::stdout());
+            writer.write_record(&[
+                "Dependency",
+                "Version",
+                "Packaging",
+                "Name",
+                "Description",
+                "Licenses",
+            ])?;
+            for (dep_name, pom) in dep_map {
+                let pom = match pom {
+                    Some(pom) => pom,
+                    None => {
+                        info!(%dep_name, "skip");
+                        continue;
+                    }
+                };
+
+                writer.write_record(&[
+                    dep_name,
+                    pom.version.unwrap_or_else(|| "".into()),
+                    pom.packaging.unwrap_or_else(|| "".into()),
+                    pom.name.unwrap_or_else(|| "".into()),
+                    pom.description.unwrap_or_else(|| "".into()),
+                    pom.licenses
+                        .iter()
+                        .map(SPDX::to_string)
+                        .collect::<Vec<_>>()
+                        .join("/"),
+                ])?;
+            }
+
+            writer.flush()?;
+        }
+    }
 
     if has_error {
         bail!("finished but an error occurred in some requests");
@@ -103,4 +173,20 @@ fn read_deps() -> Fallible<Vec<String>> {
     }
 
     Ok(list)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn struct_opt() {
+        Opt::command().debug_assert();
+    }
+
+    #[test]
+    #[ignore]
+    fn struct_opt_help() {
+        Opt::command().print_help().unwrap();
+    }
 }

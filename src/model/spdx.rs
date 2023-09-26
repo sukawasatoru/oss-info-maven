@@ -25,6 +25,8 @@ pub enum SPDX {
     Apache20,
     BSD2,
     BSD3,
+    ISC,
+    MIT,
     Other(String),
 }
 
@@ -34,6 +36,8 @@ impl Display for SPDX {
             Self::Apache20 => f.write_str("Apache-2.0"),
             Self::BSD2 => f.write_str("BSD-2-Clause"),
             Self::BSD3 => f.write_str("BSD-3-Clause"),
+            Self::MIT => f.write_str("MIT"),
+            Self::ISC => f.write_str("ISC"),
             Self::Other(data) => f.write_str(data),
         }
     }
@@ -44,8 +48,12 @@ impl FromStr for SPDX {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(match s {
-            "The Apache Software License, Version 2.0" => Self::Apache20,
+            "The Apache Software License, Version 2.0"
+            | "The Apache License, Version 2.0"
+            | "Apache 2.0" => Self::Apache20,
             "Simplified BSD License" => Self::BSD2,
+            "ISC License" => Self::ISC,
+            "MIT License" => Self::MIT,
             _ => Self::Other(s.into()),
         })
     }
