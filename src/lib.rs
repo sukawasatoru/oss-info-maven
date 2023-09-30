@@ -146,7 +146,7 @@ fn split_dependency_name_to_path(dependency_name: &str) -> Fallible<String> {
     );
 
     if segments.next().is_some() {
-        info!("ignore version of {}", dependency_name);
+        debug!("ignore version of {}", dependency_name);
     }
 
     Ok(format!("{}/{}", group_id, artifact_id))

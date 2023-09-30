@@ -18,15 +18,29 @@ use crate::prelude::*;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use std::collections::HashSet;
+use std::io::BufRead;
 use tracing::debug_span;
 
 /// https://docs.gradle.org/current/userguide/viewing_debugging_dependencies.html
-pub fn parse_dependencies_string(gradle_output: &str) -> Fallible<Vec<String>> {
+pub fn parse_dependencies_string<R>(reader: &mut R) -> Fallible<Vec<String>>
+where
+    R: BufRead,
+{
     let mut list = HashSet::new();
     let mut found_start = false;
     let mut end = false;
     let mut current_level = 0usize;
-    for line in gradle_output.lines() {
+    loop {
+        let mut line = String::new();
+        let line = match reader.read_line(&mut line) {
+            Ok(0) => break,
+            Ok(_) => line.trim_end(),
+            Err(e) => {
+                debug!(?e);
+                bail!("failed to read lines: {}", e);
+            }
+        };
+
         let line_span = debug_span!("", %line);
         let _enter = line_span.enter();
 
@@ -516,7 +530,7 @@ BUILD SUCCESSFUL in 4s
         //     .with_test_writer()
         //     .without_time()
         //     .init();
-        let actual = parse_dependencies_string(gradle_output).unwrap();
+        let actual = parse_dependencies_string(&mut gradle_output.as_bytes()).unwrap();
         let expected = vec![
             "androidx.activity:activity-compose:1.6.1".to_owned(),
             "androidx.compose.material:material:1.3.1".into(),
@@ -662,7 +676,13 @@ BUILD SUCCESSFUL in 559ms
 1 actionable task: 1 executed
 "#;
 
-        let actual = parse_dependencies_string(gradle_output).unwrap();
+        // tracing_subscriber::fmt()
+        //     .with_max_level(tracing::Level::TRACE)
+        //     .with_test_writer()
+        //     .without_time()
+        //     .init();
+
+        let actual = parse_dependencies_string(&mut gradle_output.as_bytes()).unwrap();
         let expected = vec![
             "androidx.core:core-ktx:1.9.0".into(),
             "com.github.bumptech.glide:glide:4.15.1".into(),
@@ -928,7 +948,7 @@ releaseRuntimeClasspath - Runtime classpath of compilation 'release' (target  (a
 \--- androidx.profileinstaller:profileinstaller:1.3.0 (*)
 "#;
 
-        let actual = parse_dependencies_string(gradle_output).unwrap();
+        let actual = parse_dependencies_string(&mut gradle_output.as_bytes()).unwrap();
         let expected = vec![
             "androidx.activity:activity-compose:1.6.1".to_owned(),
             "androidx.compose.material:material:1.3.1".into(),

@@ -17,10 +17,13 @@
 use clap::{CommandFactory, Parser, ValueEnum};
 use futures::StreamExt;
 use indexmap::IndexMap;
-use oss_info_maven::function::gradle::parse_prettied_dependencies_string;
+use oss_info_maven::function::gradle::{
+    parse_dependencies_string, parse_prettied_dependencies_string,
+};
 use oss_info_maven::model::SPDX;
 use oss_info_maven::prelude::*;
 use oss_info_maven::retrieve_maven_lib;
+use std::io::BufReader;
 use std::sync::Arc;
 use tokio::sync::Semaphore;
 use tracing::{info_span, Instrument};
@@ -31,6 +34,10 @@ struct Opt {
     /// Output format type.
     #[clap(long, default_value = "csv")]
     format: FormatType,
+
+    /// Parse stdin as manually formatted Gradle output.
+    #[clap(long)]
+    skip_pretty: bool,
 
     /// Generate shell completions.
     #[arg(long, exclusive = true)]
@@ -63,13 +70,17 @@ async fn main() -> Fallible<()> {
 
     info!("hello");
 
-    let mut dep_map =
-        parse_prettied_dependencies_string()?
-            .into_iter()
-            .fold(IndexMap::new(), |mut acc, data| {
-                acc.insert(data, None);
-                acc
-            });
+    let lines = if opt.skip_pretty {
+        parse_prettied_dependencies_string(BufReader::new(std::io::stdin()))?
+    } else {
+        let mut reader = BufReader::new(std::io::stdin());
+        parse_dependencies_string(&mut reader)?
+    };
+
+    let mut dep_map = lines.into_iter().fold(IndexMap::new(), |mut acc, data| {
+        acc.insert(data, None);
+        acc
+    });
 
     let client = reqwest::Client::builder().build().expect("Client::new()");
     let semaphore = Arc::new(Semaphore::new(8));

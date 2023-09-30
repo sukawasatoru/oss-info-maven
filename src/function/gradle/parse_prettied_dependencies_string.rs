@@ -16,11 +16,11 @@
 
 use crate::prelude::*;
 use std::io::prelude::*;
-use std::io::BufReader;
 
-pub fn parse_prettied_dependencies_string() -> Fallible<Vec<String>> {
-    let mut reader = BufReader::new(std::io::stdin());
-
+pub fn parse_prettied_dependencies_string<R>(mut reader: R) -> Fallible<Vec<String>>
+where
+    R: BufRead,
+{
     let mut list = vec![];
     loop {
         let mut line = String::new();
