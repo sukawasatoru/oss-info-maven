@@ -122,13 +122,19 @@ async fn main() -> Fallible<()> {
             let mut writer = csv::WriterBuilder::new().from_writer(std::io::stdout());
             writer.write_record([
                 "Dependency",
-                "Version",
+                "Version (Input)",
+                "Version (Latest)",
                 "Packaging",
                 "Name",
                 "Description",
                 "Licenses",
             ])?;
             for (dep_name, pom) in dep_map {
+                let dep_name_segments = dep_name.split(':').collect::<Vec<_>>();
+                let input_version = match dep_name_segments.get(2) {
+                    Some(data) => data.to_string(),
+                    None => "".into(),
+                };
                 let pom = match pom {
                     Some(pom) => pom,
                     None => {
@@ -138,7 +144,16 @@ async fn main() -> Fallible<()> {
                 };
 
                 writer.write_record(&[
-                    dep_name,
+                    format!(
+                        "{}:{}",
+                        dep_name_segments
+                            .first()
+                            .expect("unexpected format: group id"),
+                        dep_name_segments
+                            .get(1)
+                            .expect("unexpected format: artifact name"),
+                    ),
+                    input_version,
                     pom.version.unwrap_or_else(|| "".into()),
                     pom.packaging.unwrap_or_else(|| "".into()),
                     pom.name.unwrap_or_else(|| "".into()),
