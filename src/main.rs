@@ -17,11 +17,10 @@
 use clap::{CommandFactory, Parser, ValueEnum};
 use futures::StreamExt;
 use indexmap::IndexMap;
+use oss_info_maven::function::gradle::parse_prettied_dependencies_string;
 use oss_info_maven::model::SPDX;
 use oss_info_maven::prelude::*;
 use oss_info_maven::retrieve_maven_lib;
-use std::io::prelude::*;
-use std::io::BufReader;
 use std::sync::Arc;
 use tokio::sync::Semaphore;
 use tracing::{info_span, Instrument};
@@ -40,7 +39,7 @@ struct Opt {
 
 #[derive(Clone, ValueEnum)]
 enum FormatType {
-    CSV,
+    Csv,
 }
 
 #[tokio::main]
@@ -64,12 +63,13 @@ async fn main() -> Fallible<()> {
 
     info!("hello");
 
-    let mut dep_map = read_deps()?
-        .into_iter()
-        .fold(IndexMap::new(), |mut acc, data| {
-            acc.insert(data, None);
-            acc
-        });
+    let mut dep_map =
+        parse_prettied_dependencies_string()?
+            .into_iter()
+            .fold(IndexMap::new(), |mut acc, data| {
+                acc.insert(data, None);
+                acc
+            });
 
     let client = reqwest::Client::builder().build().expect("Client::new()");
     let semaphore = Arc::new(Semaphore::new(8));
@@ -107,9 +107,9 @@ async fn main() -> Fallible<()> {
     }
 
     match opt.format {
-        FormatType::CSV => {
+        FormatType::Csv => {
             let mut writer = csv::WriterBuilder::new().from_writer(std::io::stdout());
-            writer.write_record(&[
+            writer.write_record([
                 "Dependency",
                 "Version",
                 "Packaging",
@@ -149,30 +149,6 @@ async fn main() -> Fallible<()> {
     }
     info!("bye");
     Ok(())
-}
-
-fn read_deps() -> Fallible<Vec<String>> {
-    let mut reader = BufReader::new(std::io::stdin());
-
-    let mut list = vec![];
-    loop {
-        let mut line = String::new();
-        match reader.read_line(&mut line) {
-            Ok(0) => break,
-            Ok(_) => {
-                let line = line.trim();
-                if !line.is_empty() {
-                    list.push(line.to_owned());
-                }
-            }
-            Err(e) => {
-                debug!(?e);
-                bail!("failed to read lines: {}", e);
-            }
-        }
-    }
-
-    Ok(list)
 }
 
 #[cfg(test)]

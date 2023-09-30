@@ -126,7 +126,7 @@ async fn retrieve_maven_lib_impl(
 }
 
 fn split_dependency_name_to_path(dependency_name: &str) -> Fallible<String> {
-    let mut segments = dependency_name.split(":");
+    let mut segments = dependency_name.split(':');
     let group_id = segments
         .next()
         .expect("unexpected format?")

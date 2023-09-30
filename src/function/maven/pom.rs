@@ -55,7 +55,7 @@ impl From<Project> for POM {
                         .map(|data| data.name.parse().expect("unexpected spdx"))
                         .collect()
                 })
-                .unwrap_or_else(|| vec![]),
+                .unwrap_or_else(Vec::new),
         }
     }
 }
