@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+pub mod gradle;
 pub mod maven;
 
 #[cfg(test)]

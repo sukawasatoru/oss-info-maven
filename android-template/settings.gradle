@@ -17,4 +17,7 @@ enableFeaturePreview "TYPESAFE_PROJECT_ACCESSORS"
 enableFeaturePreview "VERSION_CATALOGS"
 
 include ':app'
+include ':app2'
+include ':lib'
+include ':liblib'
 include ':benchmark'

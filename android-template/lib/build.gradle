@@ -1,0 +1,21 @@
+plugins {
+    alias libs.plugins.android.library
+    alias libs.plugins.kotlin.android
+}
+
+android {
+    namespace 'jp.tinyport.tinyapplication.lib'
+
+    buildFeatures {
+        buildConfig false
+    }
+
+    packagingOptions {
+        exclude 'META-INF/*.kotlin_module'
+    }
+}
+
+dependencies {
+    implementation libs.androidx.core
+    implementation projects.liblib
+}
