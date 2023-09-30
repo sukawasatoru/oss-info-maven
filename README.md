@@ -1,6 +1,8 @@
 Collect OSS information for maven artifacts
 ===========================================
 
+https://github.com/sukawasatoru/oss-info-maven/assets/12950393/8bc9b7d5-37e6-4d90-88e8-37bf1a8f3a6a
+
 Usage
 -----
 
