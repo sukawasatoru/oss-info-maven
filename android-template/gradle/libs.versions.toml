@@ -1,0 +1,112 @@
+[versions]
+accompanist = "0.28.0"
+androidx-activity = "1.6.1"
+androidx-lifecycle = "2.6.0"
+androidx-navigation = "2.5.3"
+androidx-paging = "3.1.1"
+androidx-room = "2.5.1"
+androidx-tv = "1.0.0-alpha05"
+androidx-work = "2.8.1"
+agp = "7.4.2"
+apollo = "2.5.14"
+exoplayer = "2.18.4"
+glide = "4.15.1"
+hilt = "2.42"
+kotlin = "1.6.21"
+kotlinx-coroutine = "1.6.4"
+okhttp = "4.9.3"
+protobuf = "3.22.3"
+
+[libraries]
+# for view-system
+androidx-activity-activity = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activity" }
+androidx-constraint-constraint = "androidx.constraintlayout:constraintlayout:2.1.4"
+androidx-coordinator = "androidx.coordinatorlayout:coordinatorlayout:1.2.0"
+androidx-fragment = "androidx.fragment:fragment-ktx:1.5.5"
+androidx-leanback = "androidx.leanback:leanback:1.0.0"
+androidx-navigation-fragment = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "androidx-navigation" }
+androidx-recyclerView = "androidx.recyclerview:recyclerview:1.3.0"
+androidx-swipeRefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
+accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
+accompanist-swipeRefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
+androidOssLicenses = "com.google.android.gms:play-services-oss-licenses:17.0.0"
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+androidx-benchmark = "androidx.benchmark:benchmark-macro-junit4:1.1.1"
+androidx-compose-bom = "androidx.compose:compose-bom:2023.01.00"
+androidx-compose-uiTooling.module = "androidx.compose.ui:ui-tooling"
+androidx-compose-material-material.module = "androidx.compose.material:material"
+androidx-compose-material-iconsCore.module = "androidx.compose.material:material-icons-core"
+androidx-compose-material-iconsExtended.module = "androidx.compose.material:material-icons-extended"
+androidx-constraint-compose = "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+androidx-core = "androidx.core:core-ktx:1.9.0"
+androidx-datastore = "androidx.datastore:datastore:1.0.0"
+androidx-lifecycle-compiler = { module = "androidx.lifecycle:lifecycle-compiler", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-viewModel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-viewModelCompose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
+androidx-paging-common = { module = "androidx.paging:paging-common-ktx", version.ref = "androidx-paging" }
+androidx-paging-runtime = { module = "androidx.paging:paging-runtime-ktx", version.ref = "androidx-paging" }
+androidx-profileInstaller = "androidx.profileinstaller:profileinstaller:1.3.0"
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "androidx-room" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "androidx-room" }
+androidx-test-core = "androidx.test:core-ktx:1.5.0"
+androidx-test-junit = "androidx.test.ext:junit-ktx:1.1.5"
+androidx-test-rules = "androidx.test:rules:1.5.0"
+androidx-test-runner = "androidx.test:runner:1.5.2"
+androidx-test-truth = "androidx.test.ext:truth:1.5.0"
+
+# required agp 8.0 and java 17.
+androidx-tv-foundation = { module = "androidx.tv:tv-foundation", version.ref = "androidx-tv" }
+androidx-tv-material = { module = "androidx.tv:tv-material", version.ref = "androidx-tv" }
+
+androidx-viewPager2 = "androidx.viewpager2:viewpager2:1.0.0"
+androidx-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
+androidx-work-test = { module = "androidx.work:work-testing", version.ref = "androidx-work" }
+apollo-apollo = { module = "com.apollographql.apollo:apollo-android-support", version.ref = "apollo" }
+apollo-api = { module = "com.apollographql.apollo:apollo-api", version.ref = "apollo" }
+apollo-cacheSqlite = { module = "com.apollographql.apollo:apollo-normalized-cache-sqlite", version.ref = "apollo" }
+apollo-coroutine = { module = "com.apollographql.apollo:apollo-coroutines-support", version.ref = "apollo" }
+apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apollo" }
+exoplayer-exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoplayer" }
+exoplayer-okhttp = { module = "com.google.android.exoplayer:extension-okhttp", version.ref = "exoplayer" }
+glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
+glide-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+glide-okhttp3Integration = { module = "com.github.bumptech.glide:okhttp3-integration", version.ref = "glide" }
+hilt-hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+kotlinx-coroutines-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutine" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutine" }
+kotlinx-serializationJson = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0"
+kotlinResult = "com.michael-bull.kotlin-result:kotlin-result:1.1.16"
+ktor-bom = "io.ktor:ktor-bom:2.2.4"
+ktor-contentNegotiation.module = "io.ktor:ktor-client-content-negotiation"
+ktor-core.module = "io.ktor:ktor-client-core"
+ktor-cio.module = "io.ktor:ktor-client-cio"
+ktor-logging.module = "io.ktor:ktor-client-logging"
+ktor-okhttp.module = "io.ktor:ktor-client-okhttp"
+ktor-serialization-kotlinx-json.module = "io.ktor:ktor-serialization-kotlinx-json"
+material = "com.google.android.material:material:1.8.0"
+mockito-kotlin = "org.mockito.kotlin:mockito-kotlin:4.1.0"
+okhttp-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+okhttp-mockWebServer = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "okhttp" }
+protobuf-protoc = { module = "com.google.protobuf:protoc", version.ref = "protobuf" }
+protobuf-lite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf" }
+robolectric = "org.robolectric:robolectric:4.9.2"
+tinyport-logger = "jp.tinyport:logger:0.1.0"
+
+[bundles]
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+android-test = { id = "com.android.test", version.ref = "agp" }
+apollo = { id = "com.apollographql.apollo", version.ref = "apollo" }
+ksp = "com.google.devtools.ksp:1.6.21-1.0.6"
+protobuf = "com.google.protobuf:0.9.2"
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

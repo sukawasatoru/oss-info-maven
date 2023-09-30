@@ -1,0 +1,159 @@
+buildscript {
+    dependencies {
+        classpath 'com.google.android.gms:oss-licenses-plugin:0.10.6'
+    }
+}
+
+plugins {
+    alias libs.plugins.android.application apply false
+    alias libs.plugins.android.library apply false
+    alias libs.plugins.android.test apply false
+    alias libs.plugins.apollo apply false
+    alias libs.plugins.hilt apply false
+    alias libs.plugins.kotlin.android apply false
+    alias libs.plugins.kotlin.serialization apply false
+    alias libs.plugins.ksp apply false
+    alias libs.plugins.protobuf apply false
+}
+
+def setupAndroidPlugin = { Project project ->
+    project.repositories {
+        google()
+        mavenCentral()
+
+        maven {
+            url 'https://maven.pkg.github.com/sukawasatoru/android-logger'
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+            }
+        }
+    }
+
+    project.android {
+        compileSdk 33
+        buildToolsVersion '33.0.2'
+
+        defaultConfig {
+            minSdk 24
+            targetSdk 33
+        }
+
+        compileOptions {
+            coreLibraryDesugaringEnabled true
+            sourceCompatibility JavaVersion.VERSION_11
+            targetCompatibility JavaVersion.VERSION_11
+        }
+
+        lint {
+            error = ['CheckResult']
+        }
+
+        signingConfigs {
+            config {
+                enableV3Signing true
+                enableV4Signing true
+            }
+        }
+    }
+
+    project.dependencies {
+        coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
+    }
+}
+
+def setupKotlinAndroidPlugin = { Project project ->
+    project.android {
+        sourceSets.each {
+            it.java.srcDirs += "src/${it.name}/kotlin"
+        }
+
+        kotlinOptions {
+            freeCompilerArgs += '-Xopt-in=kotlin.RequiresOptIn'
+            jvmTarget = JavaVersion.VERSION_11
+        }
+    }
+}
+
+// https://developer.android.com/kotlin/style-guide
+// https://pinterest.github.io/ktlint/install/integrations/#gradle-integration
+configurations {
+    ktlint
+}
+
+dependencies {
+    ktlint('com.pinterest:ktlint:0.49.0') {
+        attributes {
+            attribute(Bundling.BUNDLING_ATTRIBUTE, getObjects().named(Bundling, Bundling.EXTERNAL))
+        }
+    }
+}
+
+def setupKtlint = { Project project ->
+    def srcArgs = ['src/**/*.kt', '!**/build/**', '!src/test/**', '!src/androidTest/**']
+    project.tasks.register('ktlintCheck', JavaExec) {
+        group 'verification'
+        description 'Check Kotlin code style.'
+        classpath configurations.ktlint
+        mainClass.set 'com.pinterest.ktlint.Main'
+        args srcArgs
+    }
+
+    project.tasks.register('ktlintFormat', JavaExec) {
+        group 'formatting'
+        description 'Fix Kotlin code style deviations.'
+        classpath configurations.ktlint
+        mainClass.set 'com.pinterest.ktlint.Main'
+        jvmArgs "--add-opens=java.base/java.lang=ALL-UNNAMED"
+        args(['-F'] + srcArgs)
+    }
+}
+
+def setupProtobufPlugin = { Project project ->
+    project.dependencies {
+        implementation libs.protobuf.lite
+    }
+
+    project.protobuf {
+        protoc {
+            artifact = libs.protobuf.protoc.get()
+        }
+
+        generateProtoTasks {
+            all().each { task ->
+                task.builtins {
+                    java {
+                        option 'lite'
+                    }
+                }
+            }
+        }
+    }
+}
+
+subprojects {
+    plugins.whenPluginAdded {
+        switch (it.class.name) {
+            case 'com.android.build.gradle.AppPlugin':
+                // fallthrough.
+            case 'com.android.build.gradle.LibraryPlugin':
+                // fallthrough.
+            case 'com.android.build.gradle.TestPlugin':
+                setupAndroidPlugin(project)
+                break
+            case 'org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper':
+                setupKotlinAndroidPlugin(project)
+                setupKtlint(project)
+                break
+            case 'com.google.protobuf.gradle.ProtobufPlugin':
+                setupProtobufPlugin(project)
+                break
+            default:
+                break
+        }
+    }
+}
+
+tasks.register('clean', Delete) {
+    delete rootProject.buildDir
+}
