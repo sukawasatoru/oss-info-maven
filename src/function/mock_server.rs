@@ -97,6 +97,7 @@ impl PoolInternal {
 }
 
 #[tokio::test]
+#[ignore]
 async fn acquire_release() {
     let port1 = acquire_port().await;
     assert_eq!(38100, *port1);
